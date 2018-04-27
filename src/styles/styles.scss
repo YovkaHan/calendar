@@ -1,0 +1,156 @@
+/* Variables */
+$vin-blue: #5bb7db;
+$vin-green: #60b044;
+$vin-red: #ff0000;
+
+*{
+  box-sizing: border-box;
+}
+/* Styles */
+body {
+  font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  line-height: 1.4em;
+  color: #4d4d4d;
+  min-width: 320px;
+  margin: 0 auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  font-weight: 300;
+}
+
+#app {
+  position: relative;
+  width: 600px;
+  margin: 0 auto;
+}
+
+td {
+	padding: 12px;
+}
+
+h2 {
+	color: $vin-blue;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 50px;
+}
+
+.c-button {
+  min-width: 100px;
+  padding: 8px;
+  font-size: 16px;
+  color: white;
+  background: gray;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 6px 9px -3px rgba(0,0,0,0.36);
+
+  &[disabled] {
+    background: #b4b4b4;
+    cursor: default;
+  }
+}
+.save {
+  &--btn {
+    margin-left: 20px;
+  }
+}
+.week {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  padding: 40px 0;
+}
+.time {
+  position: absolute;
+  display: inline-block;
+  text-align: center;
+  top: -28px;
+  line-height: 15px;
+
+  &:after {
+    content: '';
+    position: relative;
+    display: block;
+    height: 15px;
+    width: 1px;
+    background-color: gray;
+    bottom: 1px;
+  }
+}
+.day {
+  display: flex;
+  height: calc(600px / 14);
+}
+.flags {
+  display: flex;
+  width: 7.14%;
+}
+.timetable {
+  display: flex;
+  width: calc(100% - 14.28%);
+
+  &__item {
+    display: flex;
+  }
+}
+.flag {
+  position: relative;
+  display: flex;
+  width: 100%;
+
+  &__name {
+    position: absolute;
+    width: inherit;
+    text-align: center;
+    top: -36px;
+    line-height: 15px;
+  }
+
+  &--selected {
+    background-color: gray;
+  }
+  &--full {
+    background-color: gray;
+    background-image: url(../image/galochka-znak.png);
+    background-repeat: no-repeat;
+    background-size: 30px;
+    background-position: 50%;
+  }
+}
+.item {
+  position: relative;
+  width: calc(100% / 24);
+
+  &--selected {
+    background: #bcbcbc;
+  }
+}
+.cell {
+  height: 100%;
+  border: 1px solid #f3ecec;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &--selected {
+    background: #e0dede;
+  }
+
+  &--day {
+    width: 7.14%;
+    cursor: default;
+  }
+  &--flag {
+    width: 100%;
+  }
+}
+.chosen {
+
+}
