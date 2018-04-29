@@ -14,6 +14,9 @@ class Item extends Component {
     self: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
     click: PropTypes.func.isRequired,
+    mouseUp: PropTypes.func.isRequired,
+    mouseEnter: PropTypes.func.isRequired,
+    mouseLeave: PropTypes.func.isRequired,
     legend: PropTypes.bool.isRequired,
     dayName: PropTypes.string.isRequired,
     fetched: PropTypes.bool.isRequired
@@ -28,7 +31,7 @@ class Item extends Component {
     if(newProps.fetched && !this.state.afterFetch){
       this.setState({afterFetch: true});
       if(inInterval(newProps.scheduleDay, newProps.self.interval)){
-        newProps.click(newProps.self.interval, null, newProps.id, newProps.simpleObjects)
+        newProps.click(newProps.id, newProps.simpleObjects, false)
       }
     }
   }
@@ -43,16 +46,10 @@ class Item extends Component {
     return (
       <div
         className={`item ${this.props.simpleObjects[this.props.id].selected? 'item--selected':''}`}
-        onClick={(e) => this.props.click(this.props.self.interval, e, this.props.id, this.props.simpleObjects)}
-        // onDrag={(e) => console.log(e)}
-        // onDragEnter={(e) => console.log(e)}
-        onTouchStart={(e) => console.log('onTouchStart')}
-        onTouchMove ={(e) => console.log('onTouchMove ')}
-        onTouchEnd ={(e) => console.log('onTouchEnd ')}
-        onTouchCancel  ={(e) => console.log('onTouchCancel')}
-        // onMouseDown={(e) => console.log('MOUSE_DOWN')}
-        // onMouseEnter={(e) => console.log('MOUSE_ENTER')}
-        // onMouseLeave={(e) => console.log('MOUSE_LEAVE')}
+        onMouseDown={() => this.props.click(this.props.id, this.props.simpleObjects, true)}
+        onMouseUp={() => this.props.mouseUp()}
+        onMouseEnter={() => this.props.mouseEnter(this.props.id, this.props.simpleObjects)}
+        onMouseLeave={() => this.props.mouseLeave(this.props.id, this.props.simpleObjects)}
       >
         {legend}
         <Cell/>

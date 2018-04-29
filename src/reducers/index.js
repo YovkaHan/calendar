@@ -1,14 +1,15 @@
 import {combineReducers} from 'redux';
 import {
-  EDIT_SCH ,SET_SCH_ITEM, RECEIVE_DATA,
+  CHOSEN,
+  EDIT_SCH, SET_SCH_ITEM, RECEIVE_DATA,
   ADD_ONE, ASSIGN_OBJECTS, CREATE_OBJ, EDIT_OBJ,
   SELECT_SET, SELECT_ONE, SELECT_MULTIPLE,
   CLEAR_ONE, CLEAR_ALL, CLEAR_MULTIPLE
 } from '../actions'
 
 export const intervalCount = function (index, length) {
-  const spec = 1440/length;
-  return [spec*index,(spec*(index+1))-1]
+  const spec = 1440 / length;
+  return [spec * index, (spec * (index + 1)) - 1]
 }
 
 const initialSet = 'week';
@@ -33,7 +34,8 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              }
+              },
+              chosen: false
             }
           },
           {
@@ -51,7 +53,8 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              }
+              },
+              chosen: false
             }
           },
           {
@@ -69,7 +72,8 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              }
+              },
+              chosen: false
             }
           },
           {
@@ -87,7 +91,8 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              }
+              },
+              chosen: false
             }
           },
           {
@@ -105,7 +110,8 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              }
+              },
+              chosen: false
             }
           },
           {
@@ -123,7 +129,8 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              }
+              },
+              chosen: false
             }
           },
           {
@@ -141,7 +148,8 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              }
+              },
+              chosen: false
             }
           }
         ]
@@ -156,27 +164,31 @@ const fullTimetable = function (timetable, action) {
   });
 };
 
-const editView= function (view, action) {
+const editView = function (view, action) {
   const result = {...view};
   result.timetable = fullTimetable(result.timetable, action);
   return result;
 }
 
-const editStateSelected= function (selected, action) {
+const editStateSelected = function (selected, action) {
   return {...action.data};
 }
 
-const editState= function (state, action) {
+const editState = function (state, action) {
   const result = {...state};
-  result.selected = editStateSelected(state.selected, action);
+  if (action.config.operation.indexOf('selected') !== -1) {
+    result.selected = editStateSelected(state.selected, action);
+  } else if (action.config.operation.indexOf('chosen') !== -1) {
+    result.chosen = action.data
+  }
   return result;
 }
 
 const editDay = function (day, action) {
   const result = {...day};
-  if(action.config.operation.indexOf('view') !== -1){
+  if (action.config.operation.indexOf('view') !== -1) {
     result.view = editView(result.view, action);
-  }else if(action.config.operation.indexOf('state') !== -1){
+  } else if (action.config.operation.indexOf('state') !== -1) {
     result.state = editState(result.state, action);
   }
   return result;
@@ -184,11 +196,11 @@ const editDay = function (day, action) {
 
 const editWeek = function (week, action) {
   const result = {...week};
-  const day = editDay(result.data.find( (d) => d.name === action.config.name), action);
+  const day = editDay(result.data.find((d) => d.name === action.config.name), action);
 
 
   result.data = result.data.map((o) => {
-    if(day.name === o.name){
+    if (day.name === o.name) {
       return day;
     }
     return o;
@@ -230,6 +242,10 @@ const selectedSetObject = (state = {}, action) => {
 let simpleObjectsCount = "0";
 const simpleObjects = (state = {free: []}, action) => {
   switch (action.type) {
+    case CHOSEN : {
+
+      return state;
+    }
     case ADD_ONE : {
       const id = ++simpleObjectsCount;
       const o = {
@@ -248,8 +264,8 @@ const simpleObjects = (state = {free: []}, action) => {
 
       return {
         ...state,
-        free: free.filter( (o) => {
-          if(action.objects.find((d) => d.id === o.id )){
+        free: free.filter((o) => {
+          if (action.objects.find((d) => d.id === o.id)) {
             return false;
           }
           return true;
@@ -305,34 +321,34 @@ const simpleObjects = (state = {free: []}, action) => {
 const editScheduleDay = (day, action) => {
   const result = [];
 
-  let intervals = action.intervals.slice().sort(function (a,b) {
-    if(a[0] < b[0]) {
+  let intervals = action.intervals.slice().sort(function (a, b) {
+    if (a[0] < b[0]) {
       return -1;
-    }else {
+    } else {
       return 1;
     }
   });
 
-  while(intervals.length !== 0){
+  while (intervals.length !== 0) {
     let obj = intervalProcedure(intervals);
-    if(obj){
+    if (obj) {
       result.push(result);
     }
   }
 
   function intervalProcedure(intervals) {
-    let index = intervals.length-1;
+    let index = intervals.length - 1;
     let result = null;
 
-    while(intervals.length > 0){
-      if(intervals[index][1] === intervals[index-1][0]){
+    while (intervals.length > 0) {
+      if (intervals[index][1] === intervals[index - 1][0]) {
         result.bt = intervals[index][0];
-        result.bt = intervals[index-1][1];
+        result.bt = intervals[index - 1][1];
 
-        intervals[index-1][0] = intervals[index][0];
+        intervals[index - 1][0] = intervals[index][0];
         intervals.pop();
         index--;
-      }else {
+      } else {
         result.bt = intervals[index][0];
         result.bt = intervals[index][1];
         index--;
@@ -374,100 +390,137 @@ const setScheduleItem = function (state, action) {
   return result;
 }
 
-const manageDayItem = function (state, obj, set) {
-
-}
+// const manageDayItem = function (state, obj, set) {
+//
+// }
 
 const createItem = function (f, s, interval) {
-  if(!f && !s){
+  if (!f && !s) {
     return {
-      et: interval[0],
-      bt: interval[1]
+      bt: interval[0],
+      et: interval[1]
     }
-  } else if(f && !s){
+  } else if (f && !s) {
     return {
-      et: f[0].et,
-      bt: interval[1]
+      bt: f[0].bt,
+      et: interval[1]
     }
-  } else if(f && s) {
+  } else if (f && s) {
     return {
-      et: f[0].et,
-      bt: s[0].bt
+      bt: f[0].bt,
+      et: s[0].et
     }
-  } else if(!f && s){
+  } else if (!f && s) {
     return {
-      et: interval[0],
-      bt: s[0].bt
+      bt: interval[0],
+      et: s[0].et
     }
   }
 }
 
 const selectFrom = function (result, interval, set) {
-  let index ;
-  for (let i in result){
-    if(set === 'first') {
-      if (interval[0] - 1 === result[i].bt) {
+  let index;
+  for (let i in result) {
+    if (set === 'first') {
+      if (interval[0] - 1 === result[i].et) {
         index = i;
         break
       }
-    }else if(set === 'second') {
-      if (interval[1] + 1 === result[i].et) {
+    } else if (set === 'second') {
+      if (interval[1] + 1 === result[i].bt) {
         index = i;
         break
       }
     }
   }
-  if(index === undefined){
+  if (index === undefined) {
     return null;
   }
   return result.splice(index, 1);
 }
 
-export const inInterval = function (result, interval) {
+export const inInterval = function (store, interval) {
+  let result = [...store];
   for (let i in result) {
     if (interval[0] >= result[i].bt && interval[1] <= result[i].et) {
-      return true;
+      return {result, interval: result.splice(i, 1)}
     }
   }
-  return false;
+  return null;
 }
 
-const manageDay = function (state, obj, set) {
+const manageClearing = function (storePlus, intervalToClear, config) {
+  let result = storePlus.result;
+  let firstPart = {...storePlus.interval[0]};
+  let secondPart = null;
+
+  if(intervalToClear[0] > 0){
+    secondPart = {};
+    let bufEt = firstPart.et;
+    firstPart.et = intervalToClear[0] - 1;
+    secondPart.et = bufEt;
+    secondPart.bt = intervalToClear[1] + 1;
+  } else if (intervalToClear[0] === 0) {
+    firstPart.bt = intervalToClear[1] + 1;
+  } else if (intervalToClear[1] + 1 === config.max) {
+    firstPart.et = intervalToClear[0] - 1;
+  }
+
+  if(firstPart.et > firstPart.bt){
+    result.push(firstPart);
+  }
+  if(secondPart && secondPart.et > secondPart.bt){
+    result.push(secondPart);
+  }
+
+  return result;
+};
+
+const manageDay = function (state, obj, set, config) {
   const result = state.slice();
   const interval = obj.interval;
 
   if (set === 'select') {
 
-  if (!inInterval(result, interval)) {
+    if (!inInterval(result, interval)) {
 
-    result.push(createItem(
-      selectFrom(result, interval, 'first'),
-      selectFrom(result, interval, 'second'),
-      interval)
-    );
+      result.push(createItem(
+        selectFrom(result, interval, 'first'),
+        selectFrom(result, interval, 'second'),
+        interval)
+      );
+    }
+  } else if( set === 'clear' ) {
+
+    // { state, interval}
+    const storePlus = inInterval(result, interval);
+
+    if(storePlus) {
+
+      return manageClearing(storePlus, interval, config);
+    }
   }
-}
 
   return result;
 };
 
 const manageSchedule = function (state, obj, set) {
-  const result= {...state};
+  const result = {...state};
   const oInIntervals = result.intervals[obj.id];
-  const day = manageDay(result[oInIntervals.name], oInIntervals, set);
-  return {...result,[oInIntervals.name]:day}
+  const day = manageDay(result[oInIntervals.name], oInIntervals, set, result.config);
+  return {...result, [oInIntervals.name]: day}
 };
 
 const manageScheduleMultiple = function (state, action, set) {
   let result = {...state};
-  for(let i=0; i< action.objects.length; i++) {
+  for (let i = 0; i < action.objects.length; i++) {
     result = manageSchedule(result, action.objects[i], set);
   }
   return result;
 };
 
 const fetchSchedule = function (state, action) {
-  const result = Object.assign({},state,action.object);
+  const result = Object.assign({}, state, action.object);
   result.fetched = true;
   return result;
 }
@@ -475,14 +528,10 @@ const fetchSchedule = function (state, action) {
 const schedule = (state = initialSchedule, action) => {
   switch (action.type) {
     case CLEAR_MULTIPLE : {
-      let cState = {...state};
-      for(let i=0; i< action.objects.length; i++) {
-        state = manageSchedule(cState, action.objects[i], 'clear')
-      }
-      return cState;
+      return manageScheduleMultiple(state, action, 'clear');
     }
     case CLEAR_ONE : {
-      return manageSchedule(state,  action.object, 'clear');
+      return manageSchedule(state, action.object, 'clear');
     }
     case SELECT_MULTIPLE : {
       return manageScheduleMultiple(state, action, 'select');
@@ -505,7 +554,7 @@ const schedule = (state = initialSchedule, action) => {
     }
     case CLEAR_ALL : {
       const {intervals} = state;
-      return {...initialSchedule,[intervals]:intervals}
+      return {...initialSchedule, [intervals]: intervals}
     }
     default:
       return state

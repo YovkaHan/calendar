@@ -2,6 +2,7 @@
  * Created by Jordan3D on 4/25/2018.
  */
 export const GET_FREE_OBJS = 'GET_FREE_OBJS';
+export const CHOSEN = 'CREATE_OBJ';
 export const CREATE_OBJ = 'CREATE_OBJ';
 export const EDIT_OBJ = 'EDIT_OBJ';
 export const ADD_ONE = 'ADD_ONE';
@@ -18,7 +19,6 @@ export const SAVE_ALL = 'SAVE_ALL';
 export const FETCH_SCH = 'FETCH_SCH';
 export const EDIT_SCH = 'EDIT_SCH';
 export const SET_SCH_ITEM = 'SET_SCH_ITEM';
-
 
 export const createObject = (objectType) => ({
   type: CREATE_OBJ,

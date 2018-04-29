@@ -88,13 +88,19 @@ class Day extends Component {
     dbObject:  PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
     itemClick: PropTypes.func.isRequired,
-    name: PropTypes.string.isRequired
+    itemEnter: PropTypes.func.isRequired,
+    itemLeave: PropTypes.func.isRequired,
+    name: PropTypes.string.isRequired,
+    chosen: PropTypes.bool.isRequired
   };
 
   constructor(props){
     super(props);
     this.toogleFlag = this.toogleFlag.bind(this);
     this.itemClick = this.itemClick.bind(this);
+    this.mouseUp = this.mouseUp.bind(this);
+    this.mouseEnter = this.mouseEnter.bind(this);
+    this.mouseLeave = this.mouseLeave.bind(this);
     this.creation = {
       timetableLen: 24,
       phase: 0
@@ -135,7 +141,39 @@ class Day extends Component {
   }
 
   itemClick (){
+    arguments.splice = [].splice;
+    let set = arguments.splice(arguments.length-1, 1)[0];
+
+    if (set) {
+      this.props.dispatch(
+        editSetObject(
+          'day',
+          {operation: 'state-chosen', name: this.props.name},
+          true)
+      );
+    }
     this.props.itemClick.apply(null, arguments);
+  }
+
+  mouseUp () {
+    this.props.dispatch(
+      editSetObject(
+        'day',
+        {operation: 'state-chosen', name: this.props.name},
+        false)
+    );
+  }
+
+  mouseEnter () {
+    arguments.push = [].push;
+    arguments.push(this.props.chosen);
+    this.props.itemEnter.apply(null, arguments);
+  }
+
+  mouseLeave () {
+    arguments.push = [].push;
+    arguments.push(this.props.chosen);
+    this.props.itemLeave.apply(null, arguments);
   }
 
   render () {
@@ -144,7 +182,15 @@ class Day extends Component {
     {this.props.dayObject.view.name.toUpperCase()}
     </Cell>
     <Flags legend={this.props.name === 'Monday'} flags={this.props.dayObject.view.flags} state={this.props.dayObject.state} toogle={this.toogleFlag}/>
-    <TimeTable  legend={this.props.name === 'Monday'} dayName={this.props.dayObject.view.name} data={this.props.dayObject.view.timetable} itemClick={this.itemClick}/>
+    <TimeTable
+      legend={this.props.name === 'Monday'}
+      dayName={this.props.dayObject.view.name}
+      data={this.props.dayObject.view.timetable}
+      itemClick={this.itemClick}
+      mouseUp={this.mouseUp}
+      mouseLeave = {this.mouseLeave}
+      mouseEnter = {this.mouseEnter}
+    />
     </div>)
   }
 }
@@ -153,18 +199,30 @@ const mapStateToProps = (state, ownProps) => {
   const {selectedSetObject, simpleObjects} = state;
   const dayObject = selectedSetObject.data.find((o) => o.name === ownProps.name) || {};
   const dbObject = simpleObjects;
+  const chosen = dayObject.state.chosen;
 
   return {
     dayObject,
-    dbObject
+    dbObject,
+    chosen
   }
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  itemClick: (e, id, state) => {
+  itemClick: (id, state) => {
     if(!state[id].selected){
       dispatch(selectOneObject(state[id]))
     }else {
+      dispatch(clearOneObject(state[id]))
+    }
+  },
+  itemEnter: (id, state, chosen) => {
+    if(chosen) {
+      dispatch(selectOneObject(state[id]))
+    }
+  },
+  itemLeave: (id, state, chosen) => {
+    if(chosen) {
       dispatch(clearOneObject(state[id]))
     }
   },
