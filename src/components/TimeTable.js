@@ -12,35 +12,18 @@ class TimeTable extends Component {
     data: PropTypes.array.isRequired,
     itemClick: PropTypes.func.isRequired,
     mouseUp: PropTypes.func.isRequired,
-    mouseEnter: PropTypes.func.isRequired,
-    mouseLeave: PropTypes.func.isRequired,
-    mouseLeaveEnter: PropTypes.func.isRequired,
+    mouseMove: PropTypes.func.isRequired,
     legend: PropTypes.bool.isRequired,
     dayName: PropTypes.string.isRequired
   };
 
   constructor(props) {
     super(props);
-    this.itemClick = this.itemClick.bind(this);
-    this.mouseEnter = this.mouseEnter.bind(this);
-    this.mouseLeave = this.mouseLeave.bind(this);
     this.legendCount = this.legendCount.bind(this);
   }
 
   componentWillMount() {
 
-  }
-
-  itemClick() {
-    this.props.itemClick.apply(null, arguments);
-  }
-
-  mouseEnter() {
-    this.props.itemClick.apply(null, arguments);
-  }
-
-  mouseLeave() {
-    this.props.itemClick.apply(null, arguments);
   }
 
   legendCount(index) {
@@ -58,10 +41,9 @@ class TimeTable extends Component {
             id={item.id}
             legend={this.props.legend && this.legendCount(index)}
             dayName={this.props.dayName}
-            click={this.itemClick}
+            click={this.props.itemClick}
             mouseUp={this.props.mouseUp}
-            mouseEnter={this.props.mouseEnter}
-            mouseLeave={this.props.mouseLeave}
+            mouseMove={this.props.mouseMove}
           />)}
       </div>
     )

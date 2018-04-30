@@ -15,8 +15,7 @@ class Item extends Component {
     id: PropTypes.string.isRequired,
     click: PropTypes.func.isRequired,
     mouseUp: PropTypes.func.isRequired,
-    mouseEnter: PropTypes.func.isRequired,
-    mouseLeave: PropTypes.func.isRequired,
+    mouseMove: PropTypes.func.isRequired,
     legend: PropTypes.bool.isRequired,
     dayName: PropTypes.string.isRequired,
     fetched: PropTypes.bool.isRequired
@@ -31,7 +30,7 @@ class Item extends Component {
     if(newProps.fetched && !this.state.afterFetch){
       this.setState({afterFetch: true});
       if(inInterval(newProps.scheduleDay, newProps.self.interval)){
-        newProps.click(newProps.id, newProps.simpleObjects, false)
+        newProps.click(null, newProps.id, newProps.simpleObjects, false)
       }
     }
   }
@@ -46,10 +45,9 @@ class Item extends Component {
     return (
       <div
         className={`item ${this.props.simpleObjects[this.props.id].selected? 'item--selected':''}`}
-        onMouseDown={() => this.props.click(this.props.id, this.props.simpleObjects, true)}
-        onMouseUp={() => this.props.mouseUp()}
-        onMouseEnter={() => this.props.mouseEnter(this.props.id, this.props.simpleObjects)}
-        onMouseLeave={() => this.props.mouseLeave(this.props.id, this.props.simpleObjects)}
+        onMouseDown={(e) => this.props.click(e, this.props.id, this.props.simpleObjects, true)}
+        onMouseUp={(e) => this.props.mouseUp(e)}
+        onMouseMove={(e) => this.props.mouseMove(e, this.props.id, this.props.simpleObjects)}
       >
         {legend}
         <Cell/>

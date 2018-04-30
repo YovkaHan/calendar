@@ -34,8 +34,7 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              },
-              chosen: false
+              }
             }
           },
           {
@@ -53,8 +52,7 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              },
-              chosen: false
+              }
             }
           },
           {
@@ -72,8 +70,7 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              },
-              chosen: false
+              }
             }
           },
           {
@@ -91,8 +88,7 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              },
-              chosen: false
+              }
             }
           },
           {
@@ -110,8 +106,7 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              },
-              chosen: false
+              }
             }
           },
           {
@@ -129,8 +124,7 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              },
-              chosen: false
+              }
             }
           },
           {
@@ -148,8 +142,7 @@ const setObjectConstruct = function (name) {
               selected: {
                 part: false,
                 all: false
-              },
-              chosen: false
+              }
             }
           }
         ]
@@ -178,8 +171,6 @@ const editState = function (state, action) {
   const result = {...state};
   if (action.config.operation.indexOf('selected') !== -1) {
     result.selected = editStateSelected(state.selected, action);
-  } else if (action.config.operation.indexOf('chosen') !== -1) {
-    result.chosen = action.data
   }
   return result;
 }

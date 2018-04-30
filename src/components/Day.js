@@ -99,17 +99,25 @@ class Day extends Component {
     this.toogleFlag = this.toogleFlag.bind(this);
     this.itemClick = this.itemClick.bind(this);
     this.mouseUp = this.mouseUp.bind(this);
-    this.mouseEnter = this.mouseEnter.bind(this);
-    this.mouseLeave = this.mouseLeave.bind(this);
+    this.mouseMove = this.mouseMove.bind(this);
     this.creation = {
       timetableLen: 24,
       phase: 0
+    };
+    this.initView = {
+      down: false,
+      xA: null,
+      elems: []
+    };
+    this.view = {
+      down: false,
+      xA: null,
+      elems: []
     }
   }
 
   componentDidMount () {
     dayCreation(this.props, this.creation)
-    //dispatch()
   }
 
   componentWillReceiveProps (newProps) {
@@ -140,40 +148,45 @@ class Day extends Component {
     }
   }
 
-  itemClick (){
+  itemClick (e, id){
     arguments.splice = [].splice;
     let set = arguments.splice(arguments.length-1, 1)[0];
 
     if (set) {
-      this.props.dispatch(
-        editSetObject(
-          'day',
-          {operation: 'state-chosen', name: this.props.name},
-          true)
-      );
+      this.view = {
+        down: true,
+        xA: e.clientX,
+        elems: [{id, xD: 0}]
+      };
     }
+
     this.props.itemClick.apply(null, arguments);
   }
 
   mouseUp () {
-    this.props.dispatch(
-      editSetObject(
-        'day',
-        {operation: 'state-chosen', name: this.props.name},
-        false)
-    );
+    this.view = {...this.initView};
   }
 
-  mouseEnter () {
-    arguments.push = [].push;
-    arguments.push(this.props.chosen);
-    this.props.itemEnter.apply(null, arguments);
-  }
+  mouseMove (e, id) {
+    const xB = e.clientX;
+    const xD = Math.abs(this.view.xA - xB);
+    const elems = [...this.view.elems];
 
-  mouseLeave () {
-    arguments.push = [].push;
-    arguments.push(this.props.chosen);
-    this.props.itemLeave.apply(null, arguments);
+    if (this.view.down) {
+      let elem = this.view.elems.find((e) => e.id === id);
+
+      if (elem) {
+        if (!Math.floor((elem.xD - xD) / 5)) {
+          elems.splice(elems.indexOf(id), 1);
+          this.view.elems = [...elems];
+          this.props.itemClick.apply(null, arguments);
+        }
+      } else {
+        elems.push({id, xD});
+        this.view.elems = [...elems];
+        this.props.itemClick.apply(null, arguments);
+      }
+    }
   }
 
   render () {
@@ -188,8 +201,7 @@ class Day extends Component {
       data={this.props.dayObject.view.timetable}
       itemClick={this.itemClick}
       mouseUp={this.mouseUp}
-      mouseLeave = {this.mouseLeave}
-      mouseEnter = {this.mouseEnter}
+      mouseMove = {this.mouseMove}
     />
     </div>)
   }
@@ -209,23 +221,25 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  itemClick: (id, state) => {
+  itemClick: (e, id, state) => {
     if(!state[id].selected){
       dispatch(selectOneObject(state[id]))
     }else {
       dispatch(clearOneObject(state[id]))
     }
   },
-  itemEnter: (id, state, chosen) => {
-    if(chosen) {
-      dispatch(selectOneObject(state[id]))
-    }
-  },
-  itemLeave: (id, state, chosen) => {
-    if(chosen) {
-      dispatch(clearOneObject(state[id]))
-    }
-  },
+  // itemMove: (id, state, chosen) => {
+  //   if(!state[id].selected){
+  //     dispatch(selectOneObject(state[id]))
+  //   }else {
+  //     dispatch(clearOneObject(state[id]))
+  //   }
+  // },
+  // itemLeave: (id, state, chosen) => {
+  //   if(chosen) {
+  //     dispatch(clearOneObject(state[id]))
+  //   }
+  // },
   dispatch
 });
 
