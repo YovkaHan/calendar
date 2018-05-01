@@ -60,9 +60,8 @@ app.get('/schedule.json', (req, res) => {
   return res.status(200).json(sample);
 })
 app.post('/schedule.json', (req, res) => {
-  console.log(req.body.data);
-  return res.status(200);
-})
+  return res.status(200).json(req.body);
+});
 
 app.use((req, res, next) => {
     const error = new Error('Not found');

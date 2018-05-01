@@ -1,7 +1,6 @@
 import {combineReducers} from 'redux';
 import {
-  CHOSEN,
-  EDIT_SCH, SET_SCH_ITEM, RECEIVE_DATA,
+  EDIT_SCH, SET_SCH_ITEM, RECEIVE_DATA, SEND_DATA,
   ADD_ONE, ASSIGN_OBJECTS, CREATE_OBJ, EDIT_OBJ,
   SELECT_SET, SELECT_ONE, SELECT_MULTIPLE,
   CLEAR_ONE, CLEAR_ALL, CLEAR_MULTIPLE
@@ -163,6 +162,27 @@ const editView = function (view, action) {
   return result;
 }
 
+const clearMultiple = function (state, action) {
+  const result = Object.assign({}, state);
+  action.objects.map((o) => {
+    const obj = {...result[o.id]};
+    obj.selected = false;
+    result[o.id] = obj;
+  });
+  return result;
+}
+
+const clearObjects = function (state) {
+  const result = {...state};
+  for (let i in result){
+    if(result[i].id){
+      result[i] = {...result[i]};
+      result[i].selected = false;
+    }
+  }
+  return result;
+};
+
 const editStateSelected = function (selected, action) {
   return {...action.data};
 }
@@ -233,10 +253,6 @@ const selectedSetObject = (state = {}, action) => {
 let simpleObjectsCount = "0";
 const simpleObjects = (state = {free: []}, action) => {
   switch (action.type) {
-    case CHOSEN : {
-
-      return state;
-    }
     case ADD_ONE : {
       const id = ++simpleObjectsCount;
       const o = {
@@ -289,23 +305,13 @@ const simpleObjects = (state = {free: []}, action) => {
       };
     }
     case CLEAR_MULTIPLE : {
-      const result = Object.assign({}, state);
-      action.objects.map((o) => {
-        const obj = {...result[o.id]};
-        obj.selected = false;
-        result[o.id] = obj;
-      });
-      return result;
+      return clearMultiple(state, action);
     }
     case CLEAR_ALL : {
-      const result = Object.assign({}, state);
-      for (const o of result) {
-        o.selected = false;
-      }
-      return result;
+      return clearObjects(state);
     }
     default:
-      return state
+      return state;
   }
 };
 
@@ -358,13 +364,15 @@ const editScheduleDay = (day, action) => {
 }
 
 const initialSchedule = {
-  mo: [],
-  tu: [],
-  we: [],
-  th: [],
-  fr: [],
-  sa: [],
-  su: [],
+  data: {
+    mo: [],
+    tu: [],
+    we: [],
+    th: [],
+    fr: [],
+    sa: [],
+    su: [],
+  },
   intervals: {},
   config: {
     start: 0,
@@ -380,10 +388,6 @@ const setScheduleItem = function (state, action) {
   result[o.id] = o;
   return result;
 }
-
-// const manageDayItem = function (state, obj, set) {
-//
-// }
 
 const createItem = function (f, s, interval) {
   if (!f && !s) {
@@ -409,16 +413,16 @@ const createItem = function (f, s, interval) {
   }
 }
 
-const selectFrom = function (result, interval, set) {
+const selectFrom = function (data, interval, set) {
   let index;
-  for (let i in result) {
+  for (let i in data) {
     if (set === 'first') {
-      if (interval[0] - 1 === result[i].et) {
+      if (interval[0] - 1 === data[i].et) {
         index = i;
         break
       }
     } else if (set === 'second') {
-      if (interval[1] + 1 === result[i].bt) {
+      if (interval[1] + 1 === data[i].bt) {
         index = i;
         break
       }
@@ -427,7 +431,7 @@ const selectFrom = function (result, interval, set) {
   if (index === undefined) {
     return null;
   }
-  return result.splice(index, 1);
+  return data.splice(index, 1);
 }
 
 export const inInterval = function (store, interval) {
@@ -495,11 +499,21 @@ const manageDay = function (state, obj, set, config) {
   return result;
 };
 
+const clearSchedule = function (state) {
+  return Object.assign({}, initialSchedule, {
+    intervals: state.intervals
+  });
+};
+
+const manageData = function (state, name, obj, set, config) {
+  return {...state, [name]: manageDay([...state[name]], obj, set, config)};
+}
+
 const manageSchedule = function (state, obj, set) {
   const result = {...state};
   const oInIntervals = result.intervals[obj.id];
-  const day = manageDay(result[oInIntervals.name], oInIntervals, set, result.config);
-  return {...result, [oInIntervals.name]: day}
+  const data = manageData(result.data, oInIntervals.name, oInIntervals, set, result.config);
+  return {...result, data}
 };
 
 const manageScheduleMultiple = function (state, action, set) {
@@ -511,7 +525,10 @@ const manageScheduleMultiple = function (state, action, set) {
 };
 
 const fetchSchedule = function (state, action) {
-  const result = Object.assign({}, state, action.object);
+  const data = {...action.object};
+  const result = Object.assign({}, state, {
+    data: data
+  });
   result.fetched = true;
   return result;
 }
@@ -533,6 +550,9 @@ const schedule = (state = initialSchedule, action) => {
     case RECEIVE_DATA : {
       return fetchSchedule(state, action)
     }
+    case SEND_DATA : {
+      return fetchSchedule(state, action)
+    }
     case EDIT_SCH : {
       const result = {...state};
       result.name = editScheduleDay(result.name, action);
@@ -544,8 +564,7 @@ const schedule = (state = initialSchedule, action) => {
       return result;
     }
     case CLEAR_ALL : {
-      const {intervals} = state;
-      return {...initialSchedule, [intervals]: intervals}
+      return clearSchedule(state);
     }
     default:
       return state

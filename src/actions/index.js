@@ -2,7 +2,6 @@
  * Created by Jordan3D on 4/25/2018.
  */
 export const GET_FREE_OBJS = 'GET_FREE_OBJS';
-export const CHOSEN = 'CREATE_OBJ';
 export const CREATE_OBJ = 'CREATE_OBJ';
 export const EDIT_OBJ = 'EDIT_OBJ';
 export const ADD_ONE = 'ADD_ONE';
@@ -15,7 +14,7 @@ export const SELECT_ONE = 'SELECT_ONE';
 export const CLEAR_ONE = 'CLEAR_ONE';
 export const CLEAR_ALL = 'CLEAR_ALL';
 export const CLEAR_MULTIPLE = 'CLEAR_MULTIPLE';
-export const SAVE_ALL = 'SAVE_ALL';
+export const SEND_DATA = 'SEND_DATA';
 export const FETCH_SCH = 'FETCH_SCH';
 export const EDIT_SCH = 'EDIT_SCH';
 export const SET_SCH_ITEM = 'SET_SCH_ITEM';
@@ -56,10 +55,6 @@ export const clearOneObject = object => ({
   object
 });
 
-export const clearAllObjects = () => ({
-  type: CLEAR_ALL
-});
-
 export const clearMultipleObjects = objects => ({
   type: CLEAR_MULTIPLE,
   objects
@@ -69,11 +64,6 @@ export const receivePosts = (json) => ({
   type: RECEIVE_DATA,
   object: json
 });
-
-export const selectCalendarSet = set => ({
-  type: SELECT_SET,
-  set
-})
 
 export const actionFunction = (name) => {
   switch (name) {
@@ -91,10 +81,35 @@ export const setScheduleItem = (object) => ({
   object
 })
 
-export const fetchData = () => dispatch => {
-  //dispatch(requestPosts(name))
+export const fetchData = (data) => dispatch => {
+  if (data) {
+    let headers = new Headers({
+      'Content-Type' : 'application/json'
+    });
+
+    return fetch('http://localhost:3013/schedule.json', {
+      method: 'post',
+      headers: headers,
+      body: JSON.stringify(data)
+    }).then(response => response.json())
+      .then(json => console.log(json))
+  }
   return fetch(`http://localhost:3013/schedule.json`)
     .then(response => response.json())
     .then(json => dispatch(receivePosts(json)))
 }
 
+export const controlsAction = (action, data) => {
+  switch (action) {
+    case 'clear' : {
+      return ({
+        type: CLEAR_ALL
+      })
+    }
+    case 'save' : {
+      return  dispatch => {
+        dispatch(fetchData(data));
+      };
+    }
+  }
+}

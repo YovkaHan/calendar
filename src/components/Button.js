@@ -4,18 +4,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Button = ({ success, children, onClick, classProp }) => (
+const Button = ({ enable, children, onClick, classProp }) => (
   <button
     className={`c-button ${classProp}`}
     onClick={onClick}
-    disabled={!success}
+    disabled={!enable}
   >
     {children}
   </button>
 )
 
 Button.propTypes = {
-  success: PropTypes.bool.isRequired,
+  enable: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
   onClick: PropTypes.func.isRequired,
   classProp: PropTypes.string.isRequired

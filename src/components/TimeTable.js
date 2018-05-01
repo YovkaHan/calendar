@@ -22,10 +22,6 @@ class TimeTable extends Component {
     this.legendCount = this.legendCount.bind(this);
   }
 
-  componentWillMount() {
-
-  }
-
   legendCount(index) {
     const list = [0, 3, 6, 9, 12, 15, 18, 21];
 

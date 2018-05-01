@@ -10,7 +10,6 @@ import Cell from './Cell'
 import Flags from './Flags'
 import TimeTable from './TimeTable'
 
-
 const dayCreation = ({dayObject, dbObject, name, dispatch}, creation) => {
   switch (creation.phase) {
     case 0 : {
@@ -88,10 +87,7 @@ class Day extends Component {
     dbObject:  PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
     itemClick: PropTypes.func.isRequired,
-    itemEnter: PropTypes.func.isRequired,
-    itemLeave: PropTypes.func.isRequired,
-    name: PropTypes.string.isRequired,
-    chosen: PropTypes.bool.isRequired
+    name: PropTypes.string.isRequired
   };
 
   constructor(props){
@@ -194,7 +190,12 @@ class Day extends Component {
     <Cell propClass={`cell--day`} selected={this.props.dayObject.state.selected.part}>
     {this.props.dayObject.view.name.toUpperCase()}
     </Cell>
-    <Flags legend={this.props.name === 'Monday'} flags={this.props.dayObject.view.flags} state={this.props.dayObject.state} toogle={this.toogleFlag}/>
+    <Flags
+      legend={this.props.name === 'Monday'}
+      flags={this.props.dayObject.view.flags}
+      state={this.props.dayObject.state}
+      toogle={this.toogleFlag}
+    />
     <TimeTable
       legend={this.props.name === 'Monday'}
       dayName={this.props.dayObject.view.name}
@@ -211,12 +212,10 @@ const mapStateToProps = (state, ownProps) => {
   const {selectedSetObject, simpleObjects} = state;
   const dayObject = selectedSetObject.data.find((o) => o.name === ownProps.name) || {};
   const dbObject = simpleObjects;
-  const chosen = dayObject.state.chosen;
 
   return {
     dayObject,
-    dbObject,
-    chosen
+    dbObject
   }
 };
 
@@ -228,18 +227,6 @@ const mapDispatchToProps = (dispatch) => ({
       dispatch(clearOneObject(state[id]))
     }
   },
-  // itemMove: (id, state, chosen) => {
-  //   if(!state[id].selected){
-  //     dispatch(selectOneObject(state[id]))
-  //   }else {
-  //     dispatch(clearOneObject(state[id]))
-  //   }
-  // },
-  // itemLeave: (id, state, chosen) => {
-  //   if(chosen) {
-  //     dispatch(clearOneObject(state[id]))
-  //   }
-  // },
   dispatch
 });
 

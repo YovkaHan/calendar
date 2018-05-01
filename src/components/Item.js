@@ -47,7 +47,8 @@ class Item extends Component {
         className={`item ${this.props.simpleObjects[this.props.id].selected? 'item--selected':''}`}
         onMouseDown={(e) => this.props.click(e, this.props.id, this.props.simpleObjects, true)}
         onMouseUp={(e) => this.props.mouseUp(e)}
-        onMouseMove={(e) => this.props.mouseMove(e, this.props.id, this.props.simpleObjects)}
+        onMouseEnter={(e) => this.props.mouseMove(e, this.props.id, this.props.simpleObjects)}
+        onMouseLeave={(e) => this.props.mouseMove(e, this.props.id, this.props.simpleObjects)}
       >
         {legend}
         <Cell/>
@@ -56,24 +57,16 @@ class Item extends Component {
   }
 }
 
-// Item.propTypes = {
-//
-// }
 const mapStateToProps = (state, ownProps) => {
   const { simpleObjects, schedule } = state;
 
   return {
     simpleObjects,
     self: schedule.intervals[ownProps.id],
-    scheduleDay: schedule[ownProps.dayName],
+    scheduleDay: schedule.data[ownProps.dayName],
     fetched: schedule.fetched
   }
 };
-
-// const mapDispatchToProps = dispatch => ({
-//
-// });
-
 
 export default connect(
   mapStateToProps

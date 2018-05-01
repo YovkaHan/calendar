@@ -23,14 +23,6 @@ class CalendarView extends Component {
     dispatch: PropTypes.func.isRequired
   }
 
-  componentDidMount() {
-
-  }
-
-  componentWillReceiveProps(nextProps) {
-
-  }
-
   render() {
     return (
       <div>
@@ -47,11 +39,6 @@ const mapStateToProps = state => {
     selectedSet
   }
 };
-
-// const mapDispatchToProps = dispatch => ({
-//
-// });
-
 
 export default connect(
   mapStateToProps

@@ -5,7 +5,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const Cell = ({ children = null, propClass, selected }) => (
-  <div className={`cell ${propClass ? propClass :''} ${selected ? 'cell--selected' :''}`}>
+  <div
+    className=
+      {`cell ${propClass ? propClass :''} ${selected ? 'cell--selected' :''}`}
+  >
     {children}
   </div>
 );

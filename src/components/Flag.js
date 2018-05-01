@@ -21,10 +21,6 @@ class Flag extends Component {
     this.changeValue = this.changeValue.bind(this);
   }
 
-  componentWillMount () {
-    //this.props.toogle(null, this.props.configs, this.state.value)
-  }
-
   componentWillReceiveProps(nextProps) {
     if(!compareSelected(this.props.state, nextProps.state)){
       if(this.state.value === 'off' && nextProps.state.selected.all){

@@ -25,7 +25,7 @@ class Week extends Component {
     this.props.dispatch(createObject(this.props.selectedSet));
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps() {
     this.setState({created: true});
   }
 

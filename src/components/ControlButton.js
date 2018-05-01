@@ -2,14 +2,16 @@
  * Created by Jordan3D on 4/25/2018.
  */
 import { connect } from 'react-redux';
+import { controlsAction } from '../actions'
 import Button from './Button';
 
-const mapStateToProps = (state, ownProps) => ({
-  //success: ownProps.action === state.actionHavePerfomed
-});
+const mapStateToProps = () => {
+
+}
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  //onClick: () => dispatch(controlsAction(ownProps.action))
+  onClick: () => dispatch(controlsAction(ownProps.action, ownProps.scheduleData)),
+  dispatch
 });
 
 export default connect(
