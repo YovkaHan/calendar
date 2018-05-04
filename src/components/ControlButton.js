@@ -5,16 +5,12 @@ import { connect } from 'react-redux';
 import { controlsAction } from '../actions'
 import Button from './Button';
 
-const mapStateToProps = () => {
-
-}
-
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onClick: () => dispatch(controlsAction(ownProps.action, ownProps.scheduleData)),
   dispatch
 });
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(Button)

@@ -1,9 +1,9 @@
 /**
  * Created by Jordan3D on 4/25/2018.
  */
-export const GET_FREE_OBJS = 'GET_FREE_OBJS';
-export const CREATE_OBJ = 'CREATE_OBJ';
-export const EDIT_OBJ = 'EDIT_OBJ';
+export const GET_FREE_OBJECTS = 'GET_FREE_OBJECTS';
+export const CREATE_OBJECTS = 'CREATE_OBJECTS';
+export const EDIT_OBJECTS = 'EDIT_OBJECTS';
 export const ADD_ONE = 'ADD_ONE';
 export const ASSIGN_OBJECTS = 'ASSIGN_OBJECTS';
 export const REQUEST_DATA = 'REQUEST_DATA';
@@ -20,12 +20,12 @@ export const EDIT_SCH = 'EDIT_SCH';
 export const SET_SCH_ITEM = 'SET_SCH_ITEM';
 
 export const createObject = (objectType) => ({
-  type: CREATE_OBJ,
+  type: CREATE_OBJECTS,
   objectType
 });
 
 export const editSetObject = (selected, config, data) => ({
-  type: EDIT_OBJ,
+  type: EDIT_OBJECTS,
   selected,
   config,
   data
